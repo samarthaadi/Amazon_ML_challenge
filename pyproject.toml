@@ -1,0 +1,20 @@
+[project]
+name = "amazon-ml-challenge"
+version = "0.1.0"
+requires-python = ">=3.12"
+dependencies = [
+    "faiss-cpu>=1.12",
+    "matplotlib>=3.11.2",
+    "pandas>=3.0.6",
+    "psutil>=7",
+    "scikit-learn>=1.9.1",
+    "scipy>=1.17",
+    "sentence-transformers>=5,<6",
+]
+
+[dependency-groups]
+dev = [
+    "ipykernel>=7.3.0",
+    "nbclient>=0.11.0",
+    "nbformat>=5.11.1",
+]

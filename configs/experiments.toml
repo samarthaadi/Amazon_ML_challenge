@@ -1,0 +1,86 @@
+seed = 42
+split_version = "v1"
+artifact_root = "artifacts"
+train_fraction = 0.80
+validation_fraction = 0.15
+holdout_fraction = 0.05
+
+# Matching and decisions remain undecided. The baseline command selects legacy_v1.
+[stages]
+preprocessing = "legacy_v1 / blocking-v1"
+retrieval = "legacy_v1 / blocking-v1"
+matching = "TBD"
+decision = "TBD"
+
+[settings.mixed]
+train_countries = ["India", "US"]
+tune_countries = ["India", "US"]
+evaluate_countries = ["India", "US"]
+
+[settings.india_to_us]
+train_countries = ["India"]
+tune_countries = ["India"]
+evaluate_countries = ["US"]
+
+[settings.us_to_india]
+train_countries = ["US"]
+tune_countries = ["US"]
+evaluate_countries = ["India"]
+
+[blocking]
+version = "blocking-v1"
+normalization = "legacy-expanded-name-clean-address-v1"
+serialization = "original-fields-whitespace-v1"
+query_subset = "historical-development"
+queries_per_country = 20
+pilot_rows = 2000
+shard_rows = 25000
+query_batch_size = 8
+ngram_min = 3
+ngram_max = 5
+fusion_constant = 60
+budget = 100
+max_memory_gib = 16
+working_memory_gib = 12
+max_disk_gib = 250
+threads = 4
+seed = 42
+
+[blocking.allocations.lexical]
+name = 50
+address = 50
+dense = 0
+
+[blocking.allocations.dense]
+name = 0
+address = 0
+dense = 100
+
+[blocking.allocations.hybrid]
+name = 25
+address = 25
+dense = 50
+
+[blocking.encoder]
+model = "BAAI/bge-m3"
+revision = "5617a9f61b028005a4858fdac845db406aefb181"
+batch_size = 8
+# Preflight replaces this with the observed token-length p99 rounded up to 32,
+# bounded here; all actual truncation is counted. Never default to 8192.
+max_length_cap = 256
+storage_precision = "float16"
+compute_precision = "float32"
+device = "cpu"
+
+[blocking.ann]
+# IVF + scalar 8-bit quantization, trained only on unlabeled pilot pool vectors.
+# These proposals must pass measured preflight before a full build.
+kind = "IVF-SQ8"
+# Isolate FAISS from the incompatible parallel libomp teams in macOS wheels.
+threads = 1
+nlist = 256
+nprobe = 32
+pilot_nlist = 16
+pilot_nprobe = 8
+train_rows = 20000
+minimum_pilot_recall = 0.90

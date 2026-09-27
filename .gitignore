@@ -1,0 +1,11 @@
+.venv/
+__pycache__/
+*.pyc
+artifacts/
+dataset/
+eda/analysis/*.json
+eda/notebooks/
+eda/reports/
+.DS_Store
+.vscode/
+.python-version
